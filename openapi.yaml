@@ -1,0 +1,1050 @@
+openapi: 3.0.3
+info:
+  title: Kursverwaltung REST API
+  description: REST API für die Verwaltung von Lernenden, Lehrbetrieben, Kursen und Dozenten
+  version: 1.0.0
+  contact:
+    name: API Support
+
+servers:
+  - url: http://localhost:8080/ük/Modul295/api
+    description: Local development server
+
+tags:
+  - name: Lernende
+    description: Verwaltung von Lernenden (Studenten)
+  - name: Lehrbetriebe
+    description: Verwaltung von Ausbildungsbetrieben
+  - name: Countries
+    description: Verwaltung von Ländern
+  - name: Dozenten
+    description: Verwaltung von Dozenten
+  - name: Kurse
+    description: Verwaltung von Kursen
+  - name: Kurse_Lernende
+    description: Zuordnung von Lernenden zu Kursen
+  - name: Lehrbetrieb_Lernende
+    description: Zuordnung von Lernenden zu Lehrbetrieben
+
+paths:
+  /lernende.php:
+    get:
+      tags:
+        - Lernende
+      summary: Alle Lernende abrufen
+      parameters:
+        - name: id
+          in: query
+          description: ID eines spezifischen Lernenden
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Erfolgreiche Abfrage
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/Lernende"
+                  - $ref: "#/components/schemas/Lernende"
+        "404":
+          description: Lernende nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Datenbankfehler
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      tags:
+        - Lernende
+      summary: Neuen Lernenden erstellen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LernendeInput"
+      responses:
+        "200":
+          description: Lernende erfolgreich erstellt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateResponse"
+        "409":
+          description: Duplikat (Email bereits vorhanden)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Datenbankfehler
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    put:
+      tags:
+        - Lernende
+      summary: Lernenden aktualisieren
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - type: object
+                  required:
+                    - id
+                  properties:
+                    id:
+                      type: integer
+                - $ref: "#/components/schemas/LernendeInput"
+      responses:
+        "200":
+          description: Lernende erfolgreich aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "400":
+          description: ID fehlt oder keine Felder zum Aktualisieren
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Datenbankfehler
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    delete:
+      tags:
+        - Lernende
+      summary: Lernenden löschen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: integer
+      responses:
+        "200":
+          description: Lernende erfolgreich gelöscht
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "400":
+          description: ID fehlt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Lernende nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Datenbankfehler
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /lehrbetriebe.php:
+    get:
+      tags:
+        - Lehrbetriebe
+      summary: Alle Lehrbetriebe abrufen
+      parameters:
+        - name: id
+          in: query
+          description: ID eines spezifischen Lehrbetriebs
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Erfolgreiche Abfrage
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/Lehrbetrieb"
+                  - $ref: "#/components/schemas/Lehrbetrieb"
+        "404":
+          description: Lehrbetrieb nicht gefunden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      tags:
+        - Lehrbetriebe
+      summary: Neuen Lehrbetrieb erstellen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LehrbetriebInput"
+      responses:
+        "200":
+          description: Lehrbetrieb erfolgreich erstellt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateResponse"
+
+    put:
+      tags:
+        - Lehrbetriebe
+      summary: Lehrbetrieb aktualisieren
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - type: object
+                  required:
+                    - id
+                  properties:
+                    id:
+                      type: integer
+                - $ref: "#/components/schemas/LehrbetriebInput"
+      responses:
+        "200":
+          description: Lehrbetrieb erfolgreich aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+    delete:
+      tags:
+        - Lehrbetriebe
+      summary: Lehrbetrieb löschen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: integer
+      responses:
+        "200":
+          description: Lehrbetrieb erfolgreich gelöscht
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /laender.php:
+    get:
+      tags:
+        - Countries
+      summary: Alle Länder abrufen
+      parameters:
+        - name: id
+          in: query
+          description: ID eines spezifischen Landes
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Erfolgreiche Abfrage
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/Country"
+                  - $ref: "#/components/schemas/Country"
+
+    post:
+      tags:
+        - Countries
+      summary: Neues Land erstellen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CountryInput"
+      responses:
+        "200":
+          description: Land erfolgreich erstellt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateResponse"
+
+    put:
+      tags:
+        - Countries
+      summary: Land aktualisieren
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - type: object
+                  required:
+                    - id
+                  properties:
+                    id:
+                      type: integer
+                - $ref: "#/components/schemas/CountryInput"
+      responses:
+        "200":
+          description: Land erfolgreich aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+    delete:
+      tags:
+        - Countries
+      summary: Land löschen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: integer
+      responses:
+        "200":
+          description: Land erfolgreich gelöscht
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /dozenten.php:
+    get:
+      tags:
+        - Dozenten
+      summary: Alle Dozenten abrufen
+      parameters:
+        - name: id
+          in: query
+          description: ID eines spezifischen Dozenten
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Erfolgreiche Abfrage
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/Dozent"
+                  - $ref: "#/components/schemas/Dozent"
+
+    post:
+      tags:
+        - Dozenten
+      summary: Neuen Dozenten erstellen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DozentInput"
+      responses:
+        "200":
+          description: Dozent erfolgreich erstellt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateResponse"
+        "409":
+          description: Duplikat (Email bereits vorhanden)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    put:
+      tags:
+        - Dozenten
+      summary: Dozenten aktualisieren
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - type: object
+                  required:
+                    - id
+                  properties:
+                    id:
+                      type: integer
+                - $ref: "#/components/schemas/DozentInput"
+      responses:
+        "200":
+          description: Dozent erfolgreich aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+    delete:
+      tags:
+        - Dozenten
+      summary: Dozenten löschen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: integer
+      responses:
+        "200":
+          description: Dozent erfolgreich gelöscht
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /kurse.php:
+    get:
+      tags:
+        - Kurse
+      summary: Alle Kurse abrufen
+      parameters:
+        - name: id
+          in: query
+          description: ID eines spezifischen Kurses
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Erfolgreiche Abfrage
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/Kurs"
+                  - $ref: "#/components/schemas/Kurs"
+
+    post:
+      tags:
+        - Kurse
+      summary: Neuen Kurs erstellen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KursInput"
+      responses:
+        "200":
+          description: Kurs erfolgreich erstellt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateResponse"
+        "400":
+          description: Ungültiges Datumsformat
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DateError"
+        "409":
+          description: Duplikat (Kursnummer bereits vorhanden)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    put:
+      tags:
+        - Kurse
+      summary: Kurs aktualisieren
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - type: object
+                  required:
+                    - id
+                  properties:
+                    id:
+                      type: integer
+                - $ref: "#/components/schemas/KursInput"
+      responses:
+        "200":
+          description: Kurs erfolgreich aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+    delete:
+      tags:
+        - Kurse
+      summary: Kurs löschen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: integer
+      responses:
+        "200":
+          description: Kurs erfolgreich gelöscht
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /kurse_lernende.php:
+    get:
+      tags:
+        - Kurse_Lernende
+      summary: Alle Kurs-Lernende-Zuordnungen abrufen
+      parameters:
+        - name: id
+          in: query
+          description: ID einer spezifischen Zuordnung
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Erfolgreiche Abfrage
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/KursLernende"
+                  - $ref: "#/components/schemas/KursLernende"
+
+    post:
+      tags:
+        - Kurse_Lernende
+      summary: Neue Kurs-Lernende-Zuordnung erstellen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KursLernendeInput"
+      responses:
+        "200":
+          description: Zuordnung erfolgreich erstellt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateResponse"
+
+    put:
+      tags:
+        - Kurse_Lernende
+      summary: Kurs-Lernende-Zuordnung aktualisieren
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - type: object
+                  required:
+                    - id
+                  properties:
+                    id:
+                      type: integer
+                - $ref: "#/components/schemas/KursLernendeInput"
+      responses:
+        "200":
+          description: Zuordnung erfolgreich aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+    delete:
+      tags:
+        - Kurse_Lernende
+      summary: Kurs-Lernende-Zuordnung löschen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: integer
+      responses:
+        "200":
+          description: Zuordnung erfolgreich gelöscht
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /lehrbetrieb_lernende.php:
+    get:
+      tags:
+        - Lehrbetrieb_Lernende
+      summary: Alle Lehrbetrieb-Lernende-Zuordnungen abrufen
+      parameters:
+        - name: id
+          in: query
+          description: ID einer spezifischen Zuordnung
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Erfolgreiche Abfrage
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/LehrbetriebLernende"
+                  - $ref: "#/components/schemas/LehrbetriebLernende"
+
+    post:
+      tags:
+        - Lehrbetrieb_Lernende
+      summary: Neue Lehrbetrieb-Lernende-Zuordnung erstellen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LehrbetriebLernendeInput"
+      responses:
+        "200":
+          description: Zuordnung erfolgreich erstellt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateResponse"
+
+    put:
+      tags:
+        - Lehrbetrieb_Lernende
+      summary: Lehrbetrieb-Lernende-Zuordnung aktualisieren
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - type: object
+                  required:
+                    - id
+                  properties:
+                    id:
+                      type: integer
+                - $ref: "#/components/schemas/LehrbetriebLernendeInput"
+      responses:
+        "200":
+          description: Zuordnung erfolgreich aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+    delete:
+      tags:
+        - Lehrbetrieb_Lernende
+      summary: Lehrbetrieb-Lernende-Zuordnung löschen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: integer
+      responses:
+        "200":
+          description: Zuordnung erfolgreich gelöscht
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+components:
+  schemas:
+    Lernende:
+      type: object
+      properties:
+        id_lernende:
+          type: integer
+        vorname:
+          type: string
+        nachname:
+          type: string
+        strasse:
+          type: string
+        plz:
+          type: string
+        ort:
+          type: string
+        nr_land:
+          type: integer
+        geschlecht:
+          type: string
+          enum: [m, w, d]
+        telefon:
+          type: string
+        handy:
+          type: string
+        email:
+          type: string
+          format: email
+        email_privat:
+          type: string
+          format: email
+        birthdate:
+          type: string
+          format: date
+
+    LernendeInput:
+      type: object
+      properties:
+        vorname:
+          type: string
+        nachname:
+          type: string
+        strasse:
+          type: string
+        plz:
+          type: string
+        ort:
+          type: string
+        nr_land:
+          type: integer
+        geschlecht:
+          type: string
+          enum: [m, w, d]
+        telefon:
+          type: string
+        handy:
+          type: string
+        email:
+          type: string
+          format: email
+        email_privat:
+          type: string
+          format: email
+        birthdate:
+          type: string
+          format: date
+          example: "2000-01-15"
+
+    Lehrbetrieb:
+      type: object
+      properties:
+        id_lehrbetrieb:
+          type: integer
+        firma:
+          type: string
+        strasse:
+          type: string
+        plz:
+          type: string
+        ort:
+          type: string
+
+    LehrbetriebInput:
+      type: object
+      properties:
+        firma:
+          type: string
+        strasse:
+          type: string
+        plz:
+          type: string
+        ort:
+          type: string
+
+    Country:
+      type: object
+      properties:
+        id_country:
+          type: integer
+        country:
+          type: string
+
+    CountryInput:
+      type: object
+      properties:
+        country:
+          type: string
+
+    Dozent:
+      type: object
+      properties:
+        id_dozent:
+          type: integer
+        vorname:
+          type: string
+        nachname:
+          type: string
+        strasse:
+          type: string
+        plz:
+          type: string
+        ort:
+          type: string
+        nr_land:
+          type: integer
+        geschlecht:
+          type: string
+          enum: [m, w, d]
+        telefon:
+          type: string
+        handy:
+          type: string
+        email:
+          type: string
+          format: email
+        birthdate:
+          type: string
+          format: date
+
+    DozentInput:
+      type: object
+      properties:
+        vorname:
+          type: string
+        nachname:
+          type: string
+        strasse:
+          type: string
+        plz:
+          type: string
+        ort:
+          type: string
+        nr_land:
+          type: integer
+        geschlecht:
+          type: string
+          enum: [m, w, d]
+        telefon:
+          type: string
+        handy:
+          type: string
+        email:
+          type: string
+          format: email
+        birthdate:
+          type: string
+          format: date
+          example: "1980-05-20"
+
+    Kurs:
+      type: object
+      properties:
+        id_kurs:
+          type: integer
+        kursnummer:
+          type: string
+        kursthema:
+          type: string
+        inhalt:
+          type: string
+        nr_dozent:
+          type: integer
+        startdatum:
+          type: string
+          format: date
+        enddatum:
+          type: string
+          format: date
+        dauer:
+          type: string
+
+    KursInput:
+      type: object
+      properties:
+        kursnummer:
+          type: string
+        kursthema:
+          type: string
+        inhalt:
+          type: string
+        nr_dozent:
+          type: integer
+        startdatum:
+          type: string
+          format: date
+          example: "2025-11-13"
+        enddatum:
+          type: string
+          format: date
+          example: "2025-12-13"
+        dauer:
+          type: string
+          example: "40h"
+
+    KursLernende:
+      type: object
+      properties:
+        id_kurse_lernende:
+          type: integer
+        nr_lernende:
+          type: integer
+        nr_kurs:
+          type: integer
+        note:
+          type: number
+          format: float
+
+    KursLernendeInput:
+      type: object
+      properties:
+        nr_lernende:
+          type: integer
+        nr_kurs:
+          type: integer
+        note:
+          type: number
+          format: float
+          example: 5.5
+
+    LehrbetriebLernende:
+      type: object
+      properties:
+        id_lehrbetrieb_lernende:
+          type: integer
+        nr_lehrbetrieb:
+          type: integer
+        nr_lernende:
+          type: integer
+        start:
+          type: string
+          format: date
+        ende:
+          type: string
+          format: date
+        beruf:
+          type: string
+
+    LehrbetriebLernendeInput:
+      type: object
+      properties:
+        nr_lehrbetrieb:
+          type: integer
+        nr_lernende:
+          type: integer
+        start:
+          type: string
+          format: date
+          example: "2024-08-01"
+        ende:
+          type: string
+          format: date
+          example: "2027-07-31"
+        beruf:
+          type: string
+          example: "Informatiker EFZ"
+
+    CreateResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Created"
+        id:
+          type: string
+          example: "42"
+
+    SuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          enum: [Updated, Deleted]
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          type: string
+
+    DateError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Invalid datetime format"
+        details:
+          type: string
+        format:
+          type: string
+          example: "Use YYYY-MM-DD for date fields"
