@@ -1,27 +1,28 @@
 <?php
 
 /**
- * @file
- * REST API Endpoint: Lehrbetrieb_Lernende (Company-Student Assignments)
- * Manages apprenticeship relationships between companies and students
- * Supports: GET (all/single), POST (create), PUT (update), DELETE
+ * @file lehrbetrieb_lernende.php
+ * REST API: Company-Student Assignments
+ * Links apprentices to companies with dates & profession
+ * GET all/single, POST, PUT, DELETE
  */
 
 header('Content-Type: application/json');
 include_once '../config/database.php';
 include_once 'crud.php';
 
-// Initialize connection and parse request.
+// Setup connection and request params
 $conn = (new Database())->getConnection();
 $method = $_SERVER['REQUEST_METHOD'];
 $data = json_decode(file_get_contents("php://input"), TRUE) ?: [];
 $id = $data['id'] ?? ($_GET['id'] ?? NULL);
 
-// Define table and fields.
+// Table config: Company-Student junction with period
 $table = 'tbl_lehrbetrieb_lernende';
 $idField = 'id_lehrbetrieb_lernende';
 $fields = ['nr_lehrbetrieb', 'nr_lernende', 'start', 'ende', 'beruf'];
 
+// Route to appropriate handler
 try {
   if ($method == 'GET') {
     handleGet($conn, $table, $idField, $id);

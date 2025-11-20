@@ -1,35 +1,29 @@
 <?php
 
 /**
- * @file
+ * @file crud.php
  * Generic CRUD functions for REST API
- * Handles GET, POST, PUT, DELETE operations for all endpoints
+ * Handles GET, POST, PUT, DELETE with validation
  */
 
 /**
- * Validates if a value is a valid positive integer.
+ * Validates positive integer (for IDs)
  *
- * @param mixed $value
- *   The value to validate.
- *
- * @return bool
- *   TRUE if valid, FALSE otherwise.
+ * @param mixed $value Value to check
+ * @return bool True if valid positive int
  */
 function validateId($value) {
   return $value !== NULL && filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) !== FALSE;
 }
 
 /**
- * Handles GET requests.
+ * GET request handler
+ * Returns all records or single record by ID
  *
- * @param PDO $conn
- *   Database connection.
- * @param string $table
- *   Table name.
- * @param string $idField
- *   Primary key field name.
- * @param mixed $id
- *   ID to retrieve (null for all records)
+ * @param PDO $conn DB connection
+ * @param string $table Table name
+ * @param string $idField Primary key field
+ * @param mixed $id ID or null for all
  */
 function handleGet($conn, $table, $idField, $id) {
   if (!$id) {
@@ -56,13 +50,10 @@ function handleGet($conn, $table, $idField, $id) {
 }
 
 /**
- * Validates email format.
+ * Email format validator
  *
- * @param string $email
- *   Email to validate.
- *
- * @return bool
- *   TRUE if valid email or NULL, FALSE otherwise.
+ * @param string $email Email to check
+ * @return bool True if valid or empty
  */
 function validateEmail($email) {
   if ($email === NULL || $email === '') {
@@ -72,13 +63,10 @@ function validateEmail($email) {
 }
 
 /**
- * Validates date format (YYYY-MM-DD).
+ * Date format validator (YYYY-MM-DD)
  *
- * @param string $date
- *   Date to validate.
- *
- * @return bool
- *   TRUE if valid date or NULL, FALSE otherwise.
+ * @param string $date Date to check
+ * @return bool True if valid or empty
  */
 function validateDate($date) {
   if ($date === NULL || $date === '') {
@@ -89,16 +77,13 @@ function validateDate($date) {
 }
 
 /**
- * Handles POST requests (create)
+ * POST request handler (create)
+ * Validates emails, dates, foreign keys before insert
  *
- * @param PDO $conn
- *   Database connection.
- * @param string $table
- *   Table name.
- * @param array $fields
- *   Field names to insert.
- * @param array $data
- *   Request data.
+ * @param PDO $conn DB connection
+ * @param string $table Table name
+ * @param array $fields Fields to insert
+ * @param array $data Request payload
  */
 function handlePost($conn, $table, $fields, $data) {
   // Validate email fields.
@@ -151,20 +136,15 @@ function handlePost($conn, $table, $fields, $data) {
 }
 
 /**
- * Handles PUT requests (update)
+ * PUT request handler (update)
+ * Validates before updating existing record
  *
- * @param PDO $conn
- *   Database connection.
- * @param string $table
- *   Table name.
- * @param string $idField
- *   Primary key field name.
- * @param mixed $id
- *   Record ID to update.
- * @param array $fields
- *   Field names that can be updated.
- * @param array $data
- *   Request data.
+ * @param PDO $conn DB connection
+ * @param string $table Table name
+ * @param string $idField Primary key field
+ * @param mixed $id Record ID
+ * @param array $fields Updatable fields
+ * @param array $data Request payload
  */
 function handlePut($conn, $table, $idField, $id, $fields, $data) {
   if (!$id) {
@@ -226,16 +206,13 @@ function handlePut($conn, $table, $idField, $id, $fields, $data) {
 }
 
 /**
- * Handles DELETE requests.
+ * DELETE request handler
+ * Removes record by ID
  *
- * @param PDO $conn
- *   Database connection.
- * @param string $table
- *   Table name.
- * @param string $idField
- *   Primary key field name.
- * @param mixed $id
- *   Record ID to delete.
+ * @param PDO $conn DB connection
+ * @param string $table Table name
+ * @param string $idField Primary key field
+ * @param mixed $id Record ID
  */
 function handleDelete($conn, $table, $idField, $id) {
   if (!$id) {

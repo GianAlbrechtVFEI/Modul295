@@ -1,26 +1,27 @@
 <?php
 
 /**
- * @file
- * REST API Endpoint: Dozenten (Instructors)
- * Supports: GET (all/single), POST (create), PUT (update), DELETE
+ * @file dozenten.php
+ * REST API: Dozenten (Instructors)
+ * GET all/single, POST, PUT, DELETE
  */
 
 header('Content-Type: application/json');
 include_once '../config/database.php';
 include_once 'crud.php';
 
-// Initialize connection and parse request.
+// Setup connection and request params
 $conn = (new Database())->getConnection();
 $method = $_SERVER['REQUEST_METHOD'];
 $data = json_decode(file_get_contents("php://input"), TRUE) ?: [];
 $id = $data['id'] ?? ($_GET['id'] ?? NULL);
 
-// Define table and fields.
+// Table config: Instructor fields
 $table = 'tbl_dozenten';
 $idField = 'id_dozent';
 $fields = ['vorname', 'nachname', 'strasse', 'plz', 'ort', 'nr_land', 'geschlecht', 'telefon', 'handy', 'email', 'birthdate'];
 
+// Route to appropriate handler
 try {
   if ($method == 'GET') {
     handleGet($conn, $table, $idField, $id);

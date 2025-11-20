@@ -1,26 +1,27 @@
 <?php
 
 /**
- * @file
- * REST API Endpoint: Kurse (Courses)
- * Supports: GET (all/single), POST (create), PUT (update), DELETE
+ * @file kurse.php
+ * REST API: Kurse (Courses)
+ * GET all/single, POST, PUT, DELETE
  */
 
 header('Content-Type: application/json');
 include_once '../config/database.php';
 include_once 'crud.php';
 
-// Initialize connection and parse request.
+// Setup connection and request params
 $conn = (new Database())->getConnection();
 $method = $_SERVER['REQUEST_METHOD'];
 $data = json_decode(file_get_contents("php://input"), TRUE) ?: [];
 $id = $data['id'] ?? ($_GET['id'] ?? NULL);
 
-// Define table and fields.
+// Table config: Course fields with instructor FK
 $table = 'tbl_kurse';
 $idField = 'id_kurs';
 $fields = ['kursnummer', 'kursthema', 'inhalt', 'nr_dozent', 'startdatum', 'enddatum', 'dauer'];
 
+// Route to appropriate handler
 try {
   if ($method == 'GET') {
     handleGet($conn, $table, $idField, $id);

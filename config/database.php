@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Database connection class
- * Handles PDO connection to MySQL database
+ * Database connection handler
+ * Creates PDO connection to MySQL database
  */
 class Database {
   private $host = "localhost";
@@ -11,9 +11,10 @@ class Database {
   private $pass = "";
 
   /**
-   * Establishes and returns database connection.
+   * Returns active database connection
+   * Sets error mode to exceptions, uses UTF-8
    *
-   * @return PDO Database connection object
+   * @return PDO Connection object
    */
   public function getConnection() {
     try {

@@ -1,26 +1,27 @@
 <?php
 
 /**
- * @file
- * REST API Endpoint: Countries
- * Supports: GET (all/single), POST (create), PUT (update), DELETE
+ * @file laender.php
+ * REST API: Countries (Länder)
+ * GET all/single, POST, PUT, DELETE
  */
 
 header('Content-Type: application/json');
 include_once '../config/database.php';
 include_once 'crud.php';
 
-// Initialize connection and parse request.
+// Setup connection and request params
 $conn = (new Database())->getConnection();
 $method = $_SERVER['REQUEST_METHOD'];
 $data = json_decode(file_get_contents("php://input"), TRUE) ?: [];
 $id = $data['id'] ?? ($_GET['id'] ?? NULL);
 
-// Define table and fields.
+// Table config: Country name only
 $table = 'tbl_countries';
 $idField = 'id_country';
 $fields = ['country'];
 
+// Route to appropriate handler
 try {
   if ($method == 'GET') {
     handleGet($conn, $table, $idField, $id);

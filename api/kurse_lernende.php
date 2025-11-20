@@ -1,27 +1,28 @@
 <?php
 
 /**
- * @file
- * REST API Endpoint: Kurse_Lernende (Course-Student Assignments)
- * Manages which students are enrolled in which courses with grades
- * Supports: GET (all/single), POST (create), PUT (update), DELETE
+ * @file kurse_lernende.php
+ * REST API: Course-Student Assignments
+ * Links students to courses with grades
+ * GET all/single, POST, PUT, DELETE
  */
 
 header('Content-Type: application/json');
 include_once '../config/database.php';
 include_once 'crud.php';
 
-// Initialize connection and parse request.
+// Setup connection and request params
 $conn = (new Database())->getConnection();
 $method = $_SERVER['REQUEST_METHOD'];
 $data = json_decode(file_get_contents("php://input"), TRUE) ?: [];
 $id = $data['id'] ?? ($_GET['id'] ?? NULL);
 
-// Define table and fields.
+// Table config: Student-Course junction with grade
 $table = 'tbl_kurse_lernende';
 $idField = 'id_kurse_lernende';
 $fields = ['nr_lernende', 'nr_kurs', 'note'];
 
+// Route to appropriate handler
 try {
   if ($method == 'GET') {
     handleGet($conn, $table, $idField, $id);
