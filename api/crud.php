@@ -27,7 +27,8 @@ function validateId($value) {
  */
 function handleGet($conn, $table, $idField, $id) {
   if (!$id) {
-    $stmt = $conn->query("SELECT * FROM $table");
+    $stmt = $conn->prepare("SELECT * FROM $table");
+    $stmt->execute();
     echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
   }
   else {
@@ -86,6 +87,14 @@ function validateDate($date) {
  * @param array $data Request payload
  */
 function handlePost($conn, $table, $fields, $data) {
+  // Check Content-Type
+  $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+  if (strpos($contentType, 'application/json') === FALSE) {
+    http_response_code(415);
+    echo json_encode(['error' => 'Content-Type must be application/json']);
+    return;
+  }
+
   // Validate email fields.
   foreach (['email', 'email_privat'] as $emailField) {
     if (isset($data[$emailField]) && !validateEmail($data[$emailField])) {
@@ -147,6 +156,14 @@ function handlePost($conn, $table, $fields, $data) {
  * @param array $data Request payload
  */
 function handlePut($conn, $table, $idField, $id, $fields, $data) {
+  // Check Content-Type
+  $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+  if (strpos($contentType, 'application/json') === FALSE) {
+    http_response_code(415);
+    echo json_encode(['error' => 'Content-Type must be application/json']);
+    return;
+  }
+
   if (!$id) {
     http_response_code(400);
     echo json_encode(['error' => 'ID required']);
