@@ -27,7 +27,7 @@ tags:
     description: Zuordnung von Lernenden zu Lehrbetrieben
 
 paths:
-  /lernende.php:
+  /lernende:
     get:
       tags:
         - Lernende
@@ -171,7 +171,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /lehrbetriebe.php:
+  /lehrbetriebe:
     get:
       tags:
         - Lehrbetriebe
@@ -267,7 +267,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
 
-  /laender.php:
+  /laender:
     get:
       tags:
         - Countries
@@ -357,7 +357,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
 
-  /dozenten.php:
+  /dozenten:
     get:
       tags:
         - Dozenten
@@ -453,7 +453,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
 
-  /kurse.php:
+  /kurse:
     get:
       tags:
         - Kurse
@@ -555,7 +555,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
 
-  /kurse_lernende.php:
+  /kurse_lernende:
     get:
       tags:
         - Kurse_Lernende
@@ -645,7 +645,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
 
-  /lehrbetrieb_lernende.php:
+  /lehrbetrieb_lernende:
     get:
       tags:
         - Lehrbetrieb_Lernende
